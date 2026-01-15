@@ -1,0 +1,53 @@
+import "./form-input.styles.scss";
+import { ComponentPropsWithoutRef } from "react";
+
+// ✅ 방법 1: Spread 연산자 사용 (추천) - 가장 간단한 방법
+type FormInputProps = {
+  label?: string;
+} & ComponentPropsWithoutRef<"input">;
+
+// 또는 더 명시적으로:
+// type FormInputProps = {
+//   label?: string;
+// } & Omit<React.InputHTMLAttributes<HTMLInputElement>, "label">;
+
+const FormInput = ({ label, ...otherProps }: FormInputProps) => {
+  return (
+    <div className="group">
+      {label && (
+        <label
+          className={`${otherProps.value?.toString().length ? "shrink" : ""} form-input-label`}
+        >
+          {label}
+        </label>
+      )}
+      <input className="form-input" {...otherProps} />
+    </div>
+  );
+};
+
+export default FormInput;
+
+// ❌ 방법 2: 명시적 otherProps 객체 (비추천)
+// type FormInputProps = {
+//   label?: string;
+//   otherProps: InputHTMLAttributes<HTMLInputElement>;
+// };
+//
+// const FormInput = ({ label, otherProps }: FormInputProps) => {
+//   return (
+//     <div className="group">
+//       {label && (
+//         <label
+//           className={`${otherProps.value?.toString().length ? "shrink" : ""} form-input-label`}
+//         >
+//           {label}
+//         </label>
+//       )}
+//       <input className="form-input" {...otherProps} />
+//     </div>
+//   );
+// };
+//
+// 사용 시: <FormInput label="Email" otherProps={{ type: "email", value: email }} />
+// 문제점: 사용이 불편하고, 타입 체크가 덜 엄격함

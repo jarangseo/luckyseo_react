@@ -6,27 +6,17 @@ import {
   createUserDocumentFromAuth,
   signInWithGoogleRedirect,
 } from "../../utils/firebase/firebase.utils";
+import SignUpForm from "../../components/sign-up-form/sign-up-form.component";
 
 const SignIn = () => {
   useEffect(() => {
     const checkRedirectResult = async () => {
-      try {
-        console.log("Checking redirect result...");
-        const result = await getRedirectResult(auth);
-        console.log("Redirect result:", result);
-        
-        if (result) {
-          console.log("User signed in via redirect:", result.user);
-          const userDocRef = await createUserDocumentFromAuth(result.user);
-          console.log("User document reference:", userDocRef);
-        } else {
-          console.log("No redirect result found. This is normal if:");
-          console.log("1. No redirect authentication was initiated");
-          console.log("2. Redirect authentication hasn't completed yet");
-          console.log("3. Redirect result was already processed");
-        }
-      } catch (error) {
-        console.error("Error getting redirect result:", error);
+      console.log("auth", auth);
+      const result = await getRedirectResult(auth);
+      console.log(result);
+      if (result) {
+        const userDocRef = await createUserDocumentFromAuth(result.user);
+        console.log(userDocRef);
       }
     };
     checkRedirectResult();
@@ -67,6 +57,7 @@ const SignIn = () => {
       >
         Sign in with Google Redirect
       </button>
+      <SignUpForm />
     </div>
   );
 };
