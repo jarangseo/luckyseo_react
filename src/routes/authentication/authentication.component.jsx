@@ -2,13 +2,13 @@ import { useEffect } from "react";
 import { getRedirectResult } from "firebase/auth";
 import {
   auth,
-  signInWithGooglePopup,
   createUserDocumentFromAuth,
-  signInWithGoogleRedirect,
 } from "../../utils/firebase/firebase.utils";
 import SignUpForm from "../../components/sign-up-form/sign-up-form.component";
+import SignInForm from "../../components/sign-in-form/sign-in-form.component";
+import "./authentication.styles.scss";
 
-const SignIn = () => {
+const Authentication = () => {
   useEffect(() => {
     const checkRedirectResult = async () => {
       console.log("auth", auth);
@@ -22,12 +22,12 @@ const SignIn = () => {
     checkRedirectResult();
   }, []);
 
-  const logGoogleUser = async () => {
-    const result = await signInWithGooglePopup();
-    console.log(result);
-    const userDocRef = await createUserDocumentFromAuth(result.user);
-    console.log(userDocRef);
-  };
+  // const logGoogleUser = async () => {
+  //   const result = await signInWithGooglePopup();
+  //   console.log(result);
+  //   const userDocRef = await createUserDocumentFromAuth(result.user);
+  //   console.log(userDocRef);
+  // };
 
   // const logGoogleRedirectUser = async () => {
   //   const result = await signInWithGoogleRedirect();
@@ -37,13 +37,13 @@ const SignIn = () => {
   // };
 
   return (
-    <div>
-      <h1>Sign In</h1>
-      <button onClick={logGoogleUser}>Sign in with Google</button>
+    <div className="authentication-container">
+      <h1>Sign In Page</h1>
+      {/* <button onClick={logGoogleUser}>Sign in with Google</button> */}
       {/* <button onClick={logGoogleRedirectUser}>
         Sign in with Google Redirect
       </button> */}
-      <button
+      {/* <Button
         onClick={async () => {
           try {
             console.log("Initiating Google redirect sign-in...");
@@ -56,10 +56,11 @@ const SignIn = () => {
         }}
       >
         Sign in with Google Redirect
-      </button>
+      </Button> */}
+      <SignInForm />
       <SignUpForm />
     </div>
   );
 };
 
-export default SignIn;
+export default Authentication;
