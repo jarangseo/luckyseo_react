@@ -20,7 +20,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "format": "prettier --write \"src/**/*.{js,jsx,json,css}\""
+    "format": "prettier --write \"src/**/*.{js,jsx,json,css}\"",
+    "create-comp": "node scripts/create-component.js"
   },
   "eslintConfig": {
     "extends": [
