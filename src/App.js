@@ -5,6 +5,7 @@ import Authentication from "./routes/authentication/authentication.component";
 import Shop from "./routes/shop/shop.component";
 import Checkout from "./routes/checkout/checkout.component";
 import Posts from "./routes/posts/posts.component";
+import PostDetail from "./routes/post-detail/post-detail.component";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
@@ -20,6 +21,7 @@ const App = () => {
           <Route path="auth" element={<Authentication />} />
           <Route path="checkout" element={<Checkout />} />
           <Route path="posts" element={<Posts />} />
+          <Route path="posts/:id" element={<PostDetail />} />
         </Route>
       </Routes>
       <ReactQueryDevtools />

@@ -2,7 +2,14 @@ export async function fetchPosts(pageNum = 1) {
   const response = await fetch(
     `https://jsonplaceholder.typicode.com/posts?_limit=10&_page=${pageNum}`
   );
-  // throw new Error("Failed to fetch posts"); 
+  // throw new Error("Failed to fetch posts");
+  return response.json();
+}
+
+export async function fetchPost(postId) {
+  const response = await fetch(
+    `https://jsonplaceholder.typicode.com/posts/${postId}`
+  );
   return response.json();
 }
 
