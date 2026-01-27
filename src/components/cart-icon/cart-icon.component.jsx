@@ -3,8 +3,8 @@ import { ReactComponent as ShoppingIcon } from "../../assets/shopping-bag.svg";
 import useCartStore from "../../store/cart.store";
 
 const CartIcon = () => {
-  const toggleCart = useCartStore((state) => state.toggleCart);
   const cartCount = useCartStore((state) => state.getCartCount());
+  const { toggleCart } = useCartStore((state) => state.actions);
 
   return (
     <div className="cart-icon-container" onClick={toggleCart}>

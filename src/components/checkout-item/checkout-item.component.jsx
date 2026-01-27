@@ -3,9 +3,9 @@ import useCartStore from "../../store/cart.store";
 
 const CheckoutItem = ({ cartItem }) => {
   const { imageUrl, name, quantity, price } = cartItem;
-  const clearItemFromCart = useCartStore((state) => state.clearItemFromCart);
-  const addItemToCart = useCartStore((state) => state.addItemToCart);
-  const removeItemFromCart = useCartStore((state) => state.removeItemFromCart);
+  const { addItemToCart, removeItemFromCart, clearItemFromCart } = useCartStore(
+    (state) => state.actions
+  );
 
   const clearItemHandler = () => clearItemFromCart(cartItem);
   const addItemHandler = () => addItemToCart(cartItem);

@@ -4,7 +4,7 @@ import useCartStore from "../../store/cart.store";
 
 const ProductCard = ({ product }) => {
   const { name, price, imageUrl } = product;
-  const addItemToCart = useCartStore((state) => state.addItemToCart);
+  const { addItemToCart } = useCartStore((state) => state.actions);
 
   const addProductToCart = () => addItemToCart(product);
 
