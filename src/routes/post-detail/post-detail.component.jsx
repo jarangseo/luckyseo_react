@@ -1,7 +1,7 @@
 import "./post-detail.styles.scss";
 import { useParams, Link } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
-import { fetchPost, fetchComments } from "../../api";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { fetchPost, fetchComments, deletePost } from "../../api";
 import { queryKeys } from "../../utils/queryKeys";
 
 const PostDetail = () => {
@@ -26,6 +26,10 @@ const PostDetail = () => {
     queryFn: () => fetchComments(id),
   });
 
+  const deleteMutation = useMutation({
+    mutationFn: (postId) => deletePost(postId),
+  });
+
   if (isPostLoading) return <div>Loading...</div>;
   if (isPostError)
     return (
@@ -41,7 +45,17 @@ const PostDetail = () => {
       <Link to="/posts" className="back-link">
         &larr; Back to posts
       </Link>
-
+      <button
+        onClick={() => deleteMutation.mutate(id)}
+        disabled={deleteMutation.isPending}
+      >
+        Delete Post
+      </button>
+      {deleteMutation.isPending && <div>Deleting...</div>}
+      {deleteMutation.isError && (
+        <div>Error: {deleteMutation.error.message}</div>
+      )}
+      {deleteMutation.isSuccess && <div>Post deleted successfully</div>}
       <article className="post-content">
         <h1>{post.title}</h1>
         <p>{post.body}</p>
