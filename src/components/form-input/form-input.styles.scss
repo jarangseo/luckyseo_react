@@ -51,4 +51,15 @@ $main-color: black;
       @include shrinkLabel();
     }
   }
+
+  .form-input.error {
+    border-bottom-color: #dc3545;
+  }
+
+  .error-message {
+    color: #dc3545;
+    font-size: 12px;
+    margin-top: 4px;
+    display: block;
+  }
 }

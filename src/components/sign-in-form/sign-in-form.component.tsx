@@ -1,42 +1,41 @@
-import { useState, FormEvent, ChangeEvent } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { AuthError } from "firebase/auth";
 import {
   signInAuthUserWithEmailAndPassword,
   signInWithGooglePopup,
 } from "../../utils/firebase/firebase.utils";
+import { signInSchema, SignInFormData } from "../../schemas/auth.schema";
 import FormInput from "../form-input/form-input.component";
 import Button from "../button/button.component";
 import "./sign-in-form.styles.scss";
 
-interface FormFields {
-  email: string;
-  password: string;
-}
-
-const defaultFormFields: FormFields = {
-  email: "",
-  password: "",
-};
-
 const SignInForm = () => {
-  const [formFields, setFormFields] = useState<FormFields>(defaultFormFields);
-  const { email, password } = formFields;
-
-  const resetFormFields = () => {
-    setFormFields(defaultFormFields);
-  };
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<SignInFormData>({
+    resolver: zodResolver(signInSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
 
   const signInWithGoogle = async () => {
     await signInWithGooglePopup();
   };
 
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
+  const onSubmit = async (data: SignInFormData) => {
     try {
-      const response = await signInAuthUserWithEmailAndPassword(email, password);
+      const response = await signInAuthUserWithEmailAndPassword(
+        data.email,
+        data.password
+      );
       if (response) {
-        resetFormFields();
+        reset();
       }
     } catch (error) {
       const authError = error as AuthError;
@@ -54,35 +53,27 @@ const SignInForm = () => {
     }
   };
 
-  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target;
-    setFormFields({ ...formFields, [name]: value });
-  };
-
   return (
     <div className="sign-up-container">
       <h2>Already have an account?</h2>
       <span>Sign in with your email and password</span>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <FormInput
           label="Email"
           type="email"
-          required
-          onChange={handleChange}
-          name="email"
-          value={email}
+          {...register("email")}
+          error={errors.email?.message}
         />
-
         <FormInput
           label="Password"
           type="password"
-          required
-          onChange={handleChange}
-          name="password"
-          value={password}
+          {...register("password")}
+          error={errors.password?.message}
         />
         <div className="buttons-container">
-          <Button type="submit">Sign In</Button>
+          <Button type="submit" disabled={isSubmitting}>
+            {isSubmitting ? "Signing In..." : "Sign In"}
+          </Button>
           <Button type="button" buttonType="google" onClick={signInWithGoogle}>
             Google Sign In
           </Button>

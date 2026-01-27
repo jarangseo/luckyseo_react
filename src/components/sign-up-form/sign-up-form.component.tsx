@@ -1,48 +1,42 @@
-import { useState, FormEvent, ChangeEvent } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { AuthError } from "firebase/auth";
 import {
   createAuthUserWithEmailAndPassword,
   createUserDocumentFromAuth,
 } from "../../utils/firebase/firebase.utils";
+import { signUpSchema, SignUpFormData } from "../../schemas/auth.schema";
 import FormInput from "../form-input/form-input.component";
 import Button from "../button/button.component";
 import "./sign-up-form.styles.scss";
 
-interface FormFields {
-  displayName: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
-}
-
-const defaultFormFields: FormFields = {
-  displayName: "",
-  email: "",
-  password: "",
-  confirmPassword: "",
-};
-
 const SignUpForm = () => {
-  const [formFields, setFormFields] = useState<FormFields>(defaultFormFields);
-  const { displayName, email, password, confirmPassword } = formFields;
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<SignUpFormData>({
+    resolver: zodResolver(signUpSchema),
+    defaultValues: {
+      displayName: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    },
+  });
 
-  const resetFormFields = () => {
-    setFormFields(defaultFormFields);
-  };
-
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    if (password !== confirmPassword) {
-      alert("Passwords do not match");
-      return;
-    }
-
+  const onSubmit = async (data: SignUpFormData) => {
     try {
-      const response = await createAuthUserWithEmailAndPassword(email, password);
+      const response = await createAuthUserWithEmailAndPassword(
+        data.email,
+        data.password
+      );
       if (response) {
-        await createUserDocumentFromAuth(response.user, { displayName });
-        resetFormFields();
+        await createUserDocumentFromAuth(response.user, {
+          displayName: data.displayName,
+        });
+        reset();
       }
     } catch (error) {
       const authError = error as AuthError;
@@ -54,51 +48,38 @@ const SignUpForm = () => {
     }
   };
 
-  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target;
-    setFormFields({ ...formFields, [name]: value });
-  };
-
   return (
     <div className="sign-up-container">
       <h2>Don't have an account?</h2>
       <span>Sign up with your email and password</span>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <FormInput
           label="Display Name"
           type="text"
-          required
-          onChange={handleChange}
-          name="displayName"
-          value={displayName}
+          {...register("displayName")}
+          error={errors.displayName?.message}
         />
         <FormInput
           label="Email"
           type="email"
-          required
-          onChange={handleChange}
-          name="email"
-          value={email}
+          {...register("email")}
+          error={errors.email?.message}
         />
-
         <FormInput
           label="Password"
           type="password"
-          required
-          onChange={handleChange}
-          name="password"
-          value={password}
+          {...register("password")}
+          error={errors.password?.message}
         />
-
         <FormInput
           label="Confirm Password"
           type="password"
-          required
-          onChange={handleChange}
-          name="confirmPassword"
-          value={confirmPassword}
+          {...register("confirmPassword")}
+          error={errors.confirmPassword?.message}
         />
-        <Button type="submit">Sign Up</Button>
+        <Button type="submit" disabled={isSubmitting}>
+          {isSubmitting ? "Signing Up..." : "Sign Up"}
+        </Button>
       </form>
     </div>
   );
