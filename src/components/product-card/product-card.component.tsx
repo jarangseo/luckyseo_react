@@ -1,8 +1,13 @@
 import "./product-card.styles.scss";
 import Button from "../button/button.component";
 import useCartStore from "../../store/cart.store";
+import { Product } from "../../types";
 
-const ProductCard = ({ product }) => {
+interface ProductCardProps {
+  product: Product;
+}
+
+const ProductCard = ({ product }: ProductCardProps) => {
   const { name, price, imageUrl } = product;
   const { addItemToCart } = useCartStore((state) => state.actions);
 

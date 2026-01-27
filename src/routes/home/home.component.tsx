@@ -1,8 +1,14 @@
 import Directory from "../../components/directory/directory.component";
-import { Outlet } from "react-router-dom";
+
+interface CategoryItem {
+  id: number;
+  title: string;
+  subtitle: string;
+  imageUrl: string;
+}
 
 const Home = () => {
-  const categories = [
+  const categories: CategoryItem[] = [
     {
       id: 1,
       title: "hats",

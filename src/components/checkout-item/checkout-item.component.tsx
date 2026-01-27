@@ -1,7 +1,12 @@
 import "./checkout-item.styles.scss";
 import useCartStore from "../../store/cart.store";
+import { CartItem } from "../../types";
 
-const CheckoutItem = ({ cartItem }) => {
+interface CheckoutItemProps {
+  cartItem: CartItem;
+}
+
+const CheckoutItem = ({ cartItem }: CheckoutItemProps) => {
   const { imageUrl, name, quantity, price } = cartItem;
   const { addItemToCart, removeItemFromCart, clearItemFromCart } = useCartStore(
     (state) => state.actions

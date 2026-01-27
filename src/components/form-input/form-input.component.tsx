@@ -1,6 +1,12 @@
 import "./form-input.styles.scss";
+import { InputHTMLAttributes } from "react";
 
-const FormInput = ({ label, ...otherProps }) => {
+interface FormInputProps extends InputHTMLAttributes<HTMLInputElement> {
+  label?: string;
+  value: string;
+}
+
+const FormInput = ({ label, ...otherProps }: FormInputProps) => {
   return (
     <div className="group">
       {label && (

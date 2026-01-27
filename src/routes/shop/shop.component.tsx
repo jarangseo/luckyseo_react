@@ -4,7 +4,7 @@ import ProductCard from "../../components/product-card/product-card.component";
 
 const Shop = () => {
   const { products } = useProducts();
-  console.log(products);
+
   return (
     <div className="products-container">
       {products?.map((product) => (

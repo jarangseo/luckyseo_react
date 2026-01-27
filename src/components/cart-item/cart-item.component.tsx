@@ -1,7 +1,13 @@
 import "./cart-item.styles.scss";
+import { CartItem as CartItemType } from "../../types";
 
-const CartItem = ({ cartItem }) => {
+interface CartItemProps {
+  cartItem: CartItemType;
+}
+
+const CartItem = ({ cartItem }: CartItemProps) => {
   const { name, imageUrl, price, quantity } = cartItem;
+
   return (
     <div className="cart-item-container">
       <img src={imageUrl} alt={name} />

@@ -1,7 +1,19 @@
 import "./category-item.styles.scss";
 
-const CategoryItem = ({ category }) => {
+interface Category {
+  id: number;
+  title: string;
+  subtitle: string;
+  imageUrl: string;
+}
+
+interface CategoryItemProps {
+  category: Category;
+}
+
+const CategoryItem = ({ category }: CategoryItemProps) => {
   const { title, subtitle, imageUrl } = category;
+
   return (
     <div className="category-container">
       <div

@@ -1,7 +1,25 @@
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
+import { Product, CartItem } from "../types";
 
-const useCartStore = create(
+interface CartActions {
+  toggleCart: () => void;
+  setCartOpen: (isOpen: boolean) => void;
+  addItemToCart: (product: Product) => void;
+  removeItemFromCart: (product: Product) => void;
+  clearItemFromCart: (cartItem: CartItem) => void;
+  clearCart: () => void;
+}
+
+interface CartState {
+  isCartOpen: boolean;
+  cartItems: CartItem[];
+  getCartCount: () => number;
+  getCartTotal: () => number;
+  actions: CartActions;
+}
+
+const useCartStore = create<CartState>()(
   devtools(
     persist(
       (set, get) => ({
@@ -56,7 +74,7 @@ const useCartStore = create(
                 (cartItem) => cartItem.id === productToRemove.id
               );
 
-              if (existingCartItem.quantity === 1) {
+              if (existingCartItem?.quantity === 1) {
                 return {
                   cartItems: state.cartItems.filter(
                     (cartItem) => cartItem.id !== productToRemove.id

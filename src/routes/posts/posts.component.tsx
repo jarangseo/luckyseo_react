@@ -4,37 +4,37 @@ import { Link } from "react-router-dom";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { fetchPosts, deletePost } from "../../api";
 import { queryKeys } from "../../utils/queryKeys";
+import { Post } from "../../types";
 
 const totalPages = 10;
 
-const Post = () => {
+const Posts = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  const [deletingPostId, setDeletingPostId] = useState(null);
+  const [deletingPostId, setDeletingPostId] = useState<number | null>(null);
 
   const { data, isLoading, error, isError, isFetching } = useQuery({
     queryKey: queryKeys.posts.list(currentPage),
     queryFn: () => fetchPosts(currentPage),
-    // staleTime: 1000 * 60 * 5,
   });
 
   const queryClient = useQueryClient();
+
   const deleteMutation = useMutation({
-    mutationFn: (postId) => deletePost(postId),
+    mutationFn: (postId: number) => deletePost(postId),
     onSuccess: () => {
-      // 성공 메시지를 표시한 후 2초 뒤에 상태 초기화
       setTimeout(() => {
         setDeletingPostId(null);
         deleteMutation.reset();
       }, 2000);
     },
     onError: () => {
-      // 에러 메시지를 표시한 후 3초 뒤에 상태 초기화
       setTimeout(() => {
         setDeletingPostId(null);
         deleteMutation.reset();
       }, 3000);
     },
   });
+
   useEffect(() => {
     queryClient.prefetchQuery({
       queryKey: queryKeys.posts.list(currentPage + 1),
@@ -42,21 +42,17 @@ const Post = () => {
     });
   }, [currentPage, queryClient]);
 
-  // replace with useQuery
-  // const data = [];
-
   if (isLoading) return <div>Loading...</div>;
   if (isFetching) return <div>Fetching...</div>;
   if (isError)
     return (
       <div>
-        Error: {error.message}
+        Error: {(error as Error).message}
         <br />
-        {error.stack}
+        {(error as Error).stack}
       </div>
     );
 
-  // 추가 안전장치: data가 배열인지 확인
   if (!data || !Array.isArray(data)) {
     return <div>No data available</div>;
   }
@@ -72,11 +68,13 @@ const Post = () => {
   return (
     <div className="post-container">
       <ul>
-        {data.map((post) => {
+        {data.map((post: Post) => {
           const isDeleting = deletingPostId === post.id;
-          const isError = deleteMutation.isError && deletingPostId === post.id;
-          const isSuccess = deleteMutation.isSuccess && deletingPostId === post.id;
-          
+          const isDeleteError =
+            deleteMutation.isError && deletingPostId === post.id;
+          const isSuccess =
+            deleteMutation.isSuccess && deletingPostId === post.id;
+
           return (
             <li key={post.id} className="post-title">
               <Link to={`/posts/${post.id}`}>{post.title}</Link>
@@ -84,15 +82,6 @@ const Post = () => {
                 className="delete-button"
                 onClick={() => {
                   setDeletingPostId(post.id);
-                  // queryClient.invalidateQueries({
-                  //   queryKey: queryKeys.posts.list(currentPage),
-                  // });
-                  // queryClient.invalidateQueries({
-                  //   queryKey: queryKeys.posts.detail(post.id),
-                  // });
-                  // queryClient.invalidateQueries({
-                  //   queryKey: queryKeys.posts.comments(post.id),
-                  // });
                   deleteMutation.mutate(post.id);
                 }}
                 disabled={deleteMutation.isPending}
@@ -100,11 +89,19 @@ const Post = () => {
               >
                 <span className="delete-icon">×</span>
               </button>
-              {isDeleting && deleteMutation.isPending && <div className="status-message">Deleting...</div>}
-              {isError && (
-                <div className="status-message error">Error: {deleteMutation.error.message}</div>
+              {isDeleting && deleteMutation.isPending && (
+                <div className="status-message">Deleting...</div>
               )}
-              {isSuccess && <div className="status-message success">Post deleted successfully</div>}
+              {isDeleteError && (
+                <div className="status-message error">
+                  Error: {(deleteMutation.error as Error).message}
+                </div>
+              )}
+              {isSuccess && (
+                <div className="status-message success">
+                  Post deleted successfully
+                </div>
+              )}
             </li>
           );
         })}
@@ -122,4 +119,4 @@ const Post = () => {
   );
 };
 
-export default Post;
+export default Posts;

@@ -5,7 +5,8 @@ import { fetchPost, fetchComments, deletePost } from "../../api";
 import { queryKeys } from "../../utils/queryKeys";
 
 const PostDetail = () => {
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
+  const postId = Number(id);
 
   const {
     data: post,
@@ -13,8 +14,8 @@ const PostDetail = () => {
     isError: isPostError,
     error: postError,
   } = useQuery({
-    queryKey: queryKeys.posts.detail(id),
-    queryFn: () => fetchPost(id),
+    queryKey: queryKeys.posts.detail(postId),
+    queryFn: () => fetchPost(postId),
   });
 
   const {
@@ -22,19 +23,19 @@ const PostDetail = () => {
     isLoading: isCommentsLoading,
     isError: isCommentsError,
   } = useQuery({
-    queryKey: queryKeys.posts.comments(id),
-    queryFn: () => fetchComments(id),
+    queryKey: queryKeys.posts.comments(postId),
+    queryFn: () => fetchComments(postId),
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (postId) => deletePost(postId),
+    mutationFn: (postId: number) => deletePost(postId),
   });
 
   if (isPostLoading) return <div>Loading...</div>;
   if (isPostError)
     return (
       <div>
-        Error: {postError.message}
+        Error: {(postError as Error).message}
         <br />
         <Link to="/posts">Back to posts</Link>
       </div>
@@ -46,19 +47,19 @@ const PostDetail = () => {
         &larr; Back to posts
       </Link>
       <button
-        onClick={() => deleteMutation.mutate(id)}
+        onClick={() => deleteMutation.mutate(postId)}
         disabled={deleteMutation.isPending}
       >
         Delete Post
       </button>
       {deleteMutation.isPending && <div>Deleting...</div>}
       {deleteMutation.isError && (
-        <div>Error: {deleteMutation.error.message}</div>
+        <div>Error: {(deleteMutation.error as Error).message}</div>
       )}
       {deleteMutation.isSuccess && <div>Post deleted successfully</div>}
       <article className="post-content">
-        <h1>{post.title}</h1>
-        <p>{post.body}</p>
+        <h1>{post?.title}</h1>
+        <p>{post?.body}</p>
       </article>
 
       <section className="comments-section">
@@ -69,7 +70,7 @@ const PostDetail = () => {
           <div>Failed to load comments</div>
         ) : (
           <ul className="comments-list">
-            {comments.map((comment) => (
+            {comments?.map((comment) => (
               <li key={comment.id} className="comment">
                 <strong>{comment.name}</strong>
                 <span className="comment-email">{comment.email}</span>

@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, FormEvent, ChangeEvent } from "react";
+import { AuthError } from "firebase/auth";
 import {
   signInAuthUserWithEmailAndPassword,
   signInWithGooglePopup,
@@ -6,17 +7,19 @@ import {
 import FormInput from "../form-input/form-input.component";
 import Button from "../button/button.component";
 import "./sign-in-form.styles.scss";
-import { useUser } from "../../contexts/user.context";
 
-const defaultFormFields = {
-  displayName: "",
+interface FormFields {
+  email: string;
+  password: string;
+}
+
+const defaultFormFields: FormFields = {
   email: "",
   password: "",
-  confirmPassword: "",
 };
 
 const SignInForm = () => {
-  const [formFields, setFormFields] = useState(defaultFormFields);
+  const [formFields, setFormFields] = useState<FormFields>(defaultFormFields);
   const { email, password } = formFields;
 
   const resetFormFields = () => {
@@ -27,18 +30,17 @@ const SignInForm = () => {
     await signInWithGooglePopup();
   };
 
-  const handleSubmit = async (event) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     try {
-      const { user } = await signInAuthUserWithEmailAndPassword(
-        email,
-        password
-      );
-      console.log(user);
-      resetFormFields();
+      const response = await signInAuthUserWithEmailAndPassword(email, password);
+      if (response) {
+        resetFormFields();
+      }
     } catch (error) {
-      switch (error.code) {
+      const authError = error as AuthError;
+      switch (authError.code) {
         case "auth/wrong-password":
           alert("Incorrect password for email");
           break;
@@ -52,7 +54,7 @@ const SignInForm = () => {
     }
   };
 
-  const handleChange = (event) => {
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setFormFields({ ...formFields, [name]: value });
   };
