@@ -1,10 +1,11 @@
 import "./checkout.styles.scss";
-import { useCart } from "../../contexts/cart.context";
+import useCartStore from "../../store/cart.store";
 import CheckoutItem from "../../components/checkout-item/checkout-item.component";
 
 const Checkout = () => {
-  const { cartItems, cartTotal } = useCart();
-  console.log(cartItems);
+  const cartItems = useCartStore((state) => state.cartItems);
+  const cartTotal = useCartStore((state) => state.getCartTotal());
+
   return (
     <div className="checkout-container">
       <div className="checkout-header">

@@ -1,3 +1,8 @@
+/**
+ * deprecated: use useCartStore instead
+ * this context is not used in the project
+ * it is kept for reference only
+ */
 import { createContext, useState, useContext, useEffect } from "react";
 
 export const CartContext = createContext({

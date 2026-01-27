@@ -6,11 +6,11 @@ import { useUser } from "../../contexts/user.context";
 import { signOutUser } from "../../utils/firebase/firebase.utils";
 import CartIcon from "../../components/cart-icon/cart-icon.component";
 import CartDropdown from "../../components/cart-dropdown/cart-dropdown.component";
-import { useCart } from "../../contexts/cart.context";
+import useCartStore from "../../store/cart.store";
 
 const Navigation = () => {
   const { currentUser } = useUser();
-  const { isCartOpen } = useCart();
+  const isCartOpen = useCartStore((state) => state.isCartOpen);
 
   return (
     <Fragment>

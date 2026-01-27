@@ -1,10 +1,11 @@
 import "./product-card.styles.scss";
 import Button from "../button/button.component";
-import { useCart } from "../../contexts/cart.context";
+import useCartStore from "../../store/cart.store";
 
 const ProductCard = ({ product }) => {
   const { name, price, imageUrl } = product;
-  const { addItemToCart } = useCart();
+  const addItemToCart = useCartStore((state) => state.addItemToCart);
+
   const addProductToCart = () => addItemToCart(product);
 
   return (

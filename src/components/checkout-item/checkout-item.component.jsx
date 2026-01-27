@@ -1,8 +1,11 @@
 import "./checkout-item.styles.scss";
-import { useCart } from "../../contexts/cart.context";
+import useCartStore from "../../store/cart.store";
+
 const CheckoutItem = ({ cartItem }) => {
   const { imageUrl, name, quantity, price } = cartItem;
-  const { clearItemFromCart, addItemToCart, removeItemFromCart } = useCart();
+  const clearItemFromCart = useCartStore((state) => state.clearItemFromCart);
+  const addItemToCart = useCartStore((state) => state.addItemToCart);
+  const removeItemFromCart = useCartStore((state) => state.removeItemFromCart);
 
   const clearItemHandler = () => clearItemFromCart(cartItem);
   const addItemHandler = () => addItemToCart(cartItem);
